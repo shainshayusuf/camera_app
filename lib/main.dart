@@ -3,10 +3,9 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:camera/camera.dart';
-import 'package:dio/dio.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:gallery_saver/gallery_saver.dart';
+
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 import 'package:image/image.dart' as Img;
@@ -147,29 +146,32 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
     super.initState();
   }
 
-  Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
-    var knockDir =
-        await new Directory('${directory.path}/cam').create(recursive: true);
+  // Future<String> get _localPath async {
+  //   final directory = await getApplicationDocumentsDirectory();
+  //   var knockDir =
+  //       await new Directory('${directory.path}/cam').create(recursive: true);
+  //   print(directory.path);
+  //   print(knockDir.path);
+  //   return knockDir.path;
+  // }
+
+  // Future<File> get _localFile async {
+  //   final path = await _localPath;
+  //   return File('$path/counter.jpg');
+  // }
+
+  Future<void> writeCounter() async {
+    Directory directory = await getExternalStorageDirectory();
+    final myImagePath = '/storage/emulated/0/MyImages0000';
+    final myImgDir = await new Directory(myImagePath).create();
+
     print(directory.path);
-    print(knockDir.path);
-    return knockDir.path;
-  }
-
-  Future<File> get _localFile async {
-    final path = await _localPath;
-    return File('$path/counter.jpg');
-  }
-
-  Future<File> writeCounter() async {
-    Directory directory = await getApplicationDocumentsDirectory();
     File temp = File(widget.imagePath);
     Img.Image image = Img.decodeImage(temp.readAsBytesSync());
-    String pathName =
-        '${directory.path.toString()}/image_${DateTime.now()}.png';
+    String pathName = '${myImgDir.path.toString()}/image_${DateTime.now()}.jpg';
     print(pathName);
     File dFile = File(pathName);
-    dFile.writeAsBytesSync(Img.encodePng(image));
+    dFile.writeAsBytesSync(Img.encodeJpg(image));
 
 //     final directory = await getExternalStorageDirectory();
 // final myImagePath = '${directory.path}/MyImages' ;
